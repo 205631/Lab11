@@ -25,9 +25,10 @@ public class RiversDAO {
 			ResultSet res = st.executeQuery();
 
 			while (res.next()) {
+				rivers.add(new River(res.getInt("id"), res.getString("name")));
 			}
-			rivers.add(new River(res.getInt("id"), res.getString("name")));
-
+			
+			res.close();
 			conn.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -54,7 +55,7 @@ public class RiversDAO {
 				flows.add(new Flow(res.getDate("day").toLocalDate(), res.getDouble("flow"),
 						rivers.get(rivers.indexOf(new River(res.getInt("river"))))));
 			}
-
+			res.close();
 			conn.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -64,6 +65,37 @@ public class RiversDAO {
 		return flows;
 
 	}
+	
+	public List<Flow> getFlowsByRiver(River r){
+		final String sql = "select day, flow,river from flow where river=?";
+
+		List<Flow> flows = new LinkedList<Flow>();
+
+		try {
+			Connection conn = DBConnect.getConnection();
+
+			PreparedStatement st = conn.prepareStatement(sql);
+			
+			st.setInt(1, r.getId());
+
+			ResultSet res = st.executeQuery();
+
+			while (res.next()) {
+				flows.add(new Flow(res.getDate("day").toLocalDate(), res.getDouble("flow"),r));
+			}
+			
+			res.close();
+			conn.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new RuntimeException();
+		}
+
+		return flows;
+
+		
+	}
+	
 
 	public static void main(String[] args) {
 		RiversDAO dao = new RiversDAO();

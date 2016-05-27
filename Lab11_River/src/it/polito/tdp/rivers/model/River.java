@@ -8,14 +8,18 @@ public class River {
 	private List<Flow> flows;
 	private String name;
 	private int id;
+	private double fMed;
+	
 
 	public River(int id) {
 		this.id = id;
+		fMed=0;
 	}
 
 	public River(int id, String name) {
 		this.id = id;
 		this.name = name;
+		fMed=0;
 	}
 
 	public String getName() {
@@ -42,6 +46,13 @@ public class River {
 		if (flows == null)
 			flows = new ArrayList<Flow>();
 		return flows;
+	}
+	
+	public double mediaFlow(){
+		for(Flow f:flows){
+			fMed+=f.getFlow();
+		}
+		return fMed/=flows.size();
 	}
 
 	@Override
